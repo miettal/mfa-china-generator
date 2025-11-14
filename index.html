@@ -2,13 +2,10 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>引用画像ジェネレーター</title>
-  <!-- 日本語用フォント -->
+  <title>外交部風ジェネレーター</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600&display=swap">
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -18,8 +15,7 @@
       align-items: flex-start;
       background: #0b0b0b;
       color: #eee;
-      font-family: "Noto Serif JP", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
+      font-family: "Noto Serif JP", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       padding: 32px 16px;
     }
 
@@ -32,9 +28,7 @@
     }
 
     @media (max-width: 960px) {
-      .app {
-        grid-template-columns: minmax(0, 1fr);
-      }
+      .app { grid-template-columns: minmax(0, 1fr); }
     }
 
     h1 {
@@ -58,9 +52,7 @@
       border: 1px solid #2b2b2b;
     }
 
-    .field {
-      margin-bottom: 16px;
-    }
+    .field { margin-bottom: 16px; }
 
     .field label {
       display: block;
@@ -132,9 +124,7 @@
       box-shadow: none;
     }
 
-    button:active {
-      transform: translateY(1px);
-    }
+    button:active { transform: translateY(1px); }
 
     /* プレビュー部分 */
 
@@ -152,40 +142,40 @@
       border-radius: 24px;
       overflow: hidden;
       color: #ffffff;
-      /* 背景（赤グラデーション） */
       background:
         radial-gradient(circle at 15% 0%, #8b1114 0, rgba(0, 0, 0, 0) 60%),
         radial-gradient(circle at 85% 0%, #b82023 0, rgba(0, 0, 0, 0) 60%),
         radial-gradient(circle at 50% 80%, #380303 0, #120000 55%),
         linear-gradient(180deg, #5b0507, #1c0000 70%, #000000 100%);
-      padding: 80px 80px 70px;
+      padding: 34px 40px 38px; /* 上下左右詰め気味 */
       box-sizing: border-box;
       box-shadow: 0 32px 60px rgba(0, 0, 0, 0.7);
     }
 
     @media (max-width: 600px) {
       #preview {
-        padding: 56px 32px 50px;
+        padding: 26px 18px 32px;
         border-radius: 20px;
       }
     }
 
+    /* 上・中・下できっちりエリアを分ける */
     .preview-inner {
       height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      width: 100%;
+      display: grid;
+      grid-template-rows: auto 1fr auto auto;
+      row-gap: 18px;
     }
 
-    /* 上部の建物アイコン */
     .emblem {
       display: flex;
       justify-content: center;
-      margin-bottom: 36px;
+      margin-top: -6px;  /* ちょい上へ */
     }
 
     .emblem svg {
-      width: 120px;
+      width: 118px;
       height: auto;
     }
 
@@ -196,48 +186,47 @@
     }
 
     .quote {
-      flex: 1;
       width: 100%;
+      height: 100%;        /* ← 固定領域 */
+      overflow: hidden;    /* ← ここからはみ出したら NG と判定 */
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
       font-family: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
-      font-size: clamp(18px, 2.4vw, 26px);
-      line-height: 2.1;
-      letter-spacing: 0.16em;
+      font-size: 24px;     /* 初期値。JS で上書きされる */
+      line-height: 1.85;
+      letter-spacing: 0.12em;
       white-space: pre-line;
-    }
-
-    .quote::before,
-    .quote::after {
-      content: "“";
-      font-size: 1.2em;
-      transform: translateY(-0.1em);
-      margin: 0 0.05em;
-    }
-
-    .quote::after {
-      content: "”";
+      padding: 0;
     }
 
     .footer {
       width: 100%;
       border-top: 1px solid rgba(230, 210, 180, 0.6);
-      margin-top: 32px;
-      padding-top: 18px;
+      padding-top: 10px;
       display: flex;
       justify-content: center;
       font-size: clamp(11px, 1.4vw, 13px);
       letter-spacing: 0.2em;
     }
 
-    .footer span + span::before {
-      content: "　";
+    .footer span + span::before { content: "　"; }
+    .footer span { white-space: nowrap; }
+
+    .generator-label {
+      text-align: center;
+      font-size: 10px;
+      color: rgba(230, 210, 180, 0.6);
+      letter-spacing: 0.15em;
+      margin-top: 8px;
     }
 
-    .footer span {
-      white-space: nowrap;
+    @media (max-width: 600px) {
+      .generator-label {
+        font-size: 9px;
+        margin-top: 6px;
+      }
     }
   </style>
 </head>
@@ -245,31 +234,36 @@
   <div class="app">
     <!-- 左側: コントロール -->
     <div class="card">
-      <h1>引用画像ジェネレーター</h1>
+      <h1>外交部風ジェネレーター</h1>
       <p class="description">
-        任意のテキストを入力すると、右側に赤い背景の引用画像としてプレビューされます。<br>
-        そのまま SNS などで使える正方形画像を簡単に作成できます。
+あなたの入力した文章を、外交部風の重々しい画像で表現します。<br>
+任意のテキストを入力すると、右側に赤い背景の画像としてプレビューされます。<br>
+公序良俗に反する内容は避け、ユーモアある使い方に努めてください。特に<strong style="color: #ff6b6b;">特定の人や団体を茶化したり揶揄したりして相手を不快にするような使い方は厳禁</strong>です。<br>
+このジェネレーターは無保証です。一切の損害に対して何の責任も負いません。このジェネレーターはMITライセンスのオープンソースソフトウェアとして公開されています(<a href="https://github.com/miettal/mfa-china-generator">link</a>)。作成者: <a href="https://x.com/miettal">@miettal</a>
       </p>
 
       <div class="field">
         <label for="quoteInput">本文</label>
-        <textarea id="quoteInput">日本は再び軍国主義の過ちを
-繰り返すつもりなのか
-再び中国人民とアジア人民を
-敵に回すつもりなのか
-戦後の国際秩序を
-覆そうとしているのか</textarea>
+        <textarea id="quoteInput">
+“たけのこの里は再び
+チョコとクッキーのバランスを
+無視するつもりなのか
+再びきのこの山の支持者と
+菓子業界全体を敵に回すつもりなのか
+お菓子界の秩序を
+覆そうとしているのか”
+        </textarea>
         <small>改行位置は自由に調整してください（そのまま行区切りとして反映されます）。</small>
       </div>
 
       <div class="field">
         <label for="sourceInput">出典（下部左）</label>
-        <input id="sourceInput" type="text" value="中国外交部報道官">
+        <input id="sourceInput" type="text" value="きのこの山陣営報道官">
       </div>
 
       <div class="field">
         <label for="dateInput">日付（下部右）</label>
-        <input id="dateInput" type="text" value="2025年11月13日">
+        <input id="dateInput" type="text" value="">
       </div>
 
       <div class="buttons">
@@ -283,7 +277,7 @@
       <div id="preview">
         <div class="preview-inner">
           <div class="emblem">
-            <!-- シンプルな建物アイコン（線画） -->
+            <!-- 建物アイコン（線画） -->
             <svg viewBox="0 0 200 80" aria-hidden="true">
               <path d="M40 70 V30
                        C40 20 55 10 100 10
@@ -303,36 +297,73 @@
             <span id="sourcePreview">中国外交部報道官</span>
             <span id="datePreview">2025年11月13日</span>
           </div>
+
+          <div class="generator-label">外交部風ジェネレーターで生成</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- html2canvas: 要ネット接続 -->
+  <!-- 画像化用ライブラリ -->
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script>
-    const quoteInput = document.getElementById("quoteInput");
+    const quoteInput  = document.getElementById("quoteInput");
     const sourceInput = document.getElementById("sourceInput");
-    const dateInput = document.getElementById("dateInput");
+    const dateInput   = document.getElementById("dateInput");
 
-    const quotePreview = document.getElementById("quotePreview");
+    const quotePreview  = document.getElementById("quotePreview");
     const sourcePreview = document.getElementById("sourcePreview");
-    const datePreview = document.getElementById("datePreview");
+    const datePreview   = document.getElementById("datePreview");
 
     const downloadBtn = document.getElementById("downloadBtn");
-    const resetBtn = document.getElementById("resetBtn");
-    const preview = document.getElementById("preview");
+    const resetBtn    = document.getElementById("resetBtn");
+    const preview     = document.getElementById("preview");
+
+    // 今日の日付を設定
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const day = today.getDate();
+    const todayStr = `${year}年${month}月${day}日`;
+    dateInput.value = todayStr;
 
     const initialState = {
       quote: quoteInput.value,
       source: sourceInput.value,
-      date: dateInput.value,
+      date:  dateInput.value,
     };
 
+    // 引用テキストの自動フォント調整
+    function fitQuoteFont() {
+      if (!quotePreview.textContent) return;
+
+      const maxSize = 30;   // 最大フォントサイズ(px)
+      const minSize = 10;   // 最小フォントサイズ(px)
+      const step    = 0.4;  // 調整ステップ
+
+      let current = maxSize;
+      quotePreview.style.fontSize = current + "px";
+
+      let safety = 0;
+      while (
+        (quotePreview.scrollHeight > quotePreview.clientHeight ||
+         quotePreview.scrollWidth  > quotePreview.clientWidth) &&
+        current > minSize &&
+        safety < 300
+      ) {
+        current -= step;
+        quotePreview.style.fontSize = current + "px";
+        safety++;
+      }
+    }
+
     function syncPreview() {
-      quotePreview.textContent = quoteInput.value || "テキストを入力してください";
+      quotePreview.textContent  = quoteInput.value || "テキストを入力してください";
       sourcePreview.textContent = sourceInput.value || "";
-      datePreview.textContent = dateInput.value || "";
+      datePreview.textContent   = dateInput.value || "";
+
+      // 日本語でもしっかり判定されるよう、レイアウト確定後に実行
+      requestAnimationFrame(fitQuoteFont);
     }
 
     quoteInput.addEventListener("input", syncPreview);
@@ -340,14 +371,17 @@
     dateInput.addEventListener("input", syncPreview);
 
     resetBtn.addEventListener("click", () => {
-      quoteInput.value = initialState.quote;
+      quoteInput.value  = initialState.quote;
       sourceInput.value = initialState.source;
-      dateInput.value = initialState.date;
+      dateInput.value   = initialState.date;
       syncPreview();
     });
 
+    window.addEventListener("resize", () => {
+      requestAnimationFrame(fitQuoteFont);
+    });
+
     downloadBtn.addEventListener("click", async () => {
-      // 高解像度で出力したいので scale を上げる
       const scale = 2;
       const rect = preview.getBoundingClientRect();
 
@@ -369,3 +403,4 @@
   </script>
 </body>
 </html>
+
