@@ -228,9 +228,172 @@
         margin-top: 6px;
       }
     }
+
+    /* モーダルスタイル */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .modal-content {
+      background: #1a1a1a;
+      border: 2px solid #f6d27d;
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 600px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+    }
+
+    .modal-text {
+      font-size: 16px;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      text-align: center;
+      color: #eee;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .modal-btn {
+      padding: 12px 28px;
+      font-size: 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .agree-btn {
+      background: linear-gradient(135deg, #4caf50, #45a049);
+      color: white;
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+    }
+
+    .agree-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(76, 175, 80, 0.5);
+    }
+
+    .disagree-btn {
+      background: #444;
+      color: #ccc;
+      border: 1px solid #666;
+    }
+
+    .disagree-btn:hover {
+      background: #555;
+    }
+
+    /* No Signal 画面スタイル */
+    .no-signal-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      z-index: 10000;
+    }
+
+    .color-bars {
+      width: 100%;
+      height: 100%;
+      display: flex;
+    }
+
+    .bar {
+      flex: 1;
+      height: 100%;
+    }
+
+    .no-signal-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      background: rgba(0, 0, 0, 0.85);
+      padding: 60px 80px;
+      border-radius: 8px;
+    }
+
+    .signal-message {
+      font-size: 36px;
+      font-weight: bold;
+      color: #fff;
+      margin: 16px 0;
+      font-family: monospace;
+      letter-spacing: 0.15em;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    @media (max-width: 600px) {
+      .modal-content {
+        padding: 30px 20px;
+      }
+
+      .modal-text {
+        font-size: 14px;
+      }
+
+      .no-signal-text {
+        padding: 40px 30px;
+      }
+
+      .signal-message {
+        font-size: 22px;
+        margin: 10px 0;
+      }
+    }
   </style>
 </head>
 <body>
+  <!-- 警告モーダル -->
+  <div id="warningModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-text">
+        公序良俗に反する内容は避け、ユーモアある使い方に努めてください。特に<strong style="color: #ff6b6b;">特定の人や団体を茶化したり揶揄したりして相手を不快にするような使い方は厳禁</strong>です。
+      </div>
+      <div class="modal-buttons">
+        <button id="agreeBtn" class="modal-btn agree-btn">同意する / Agree</button>
+        <button id="disagreeBtn" class="modal-btn disagree-btn">同意しない / Disagree</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Signal 画面 -->
+  <div id="noSignalScreen" class="no-signal-screen" style="display: none;">
+    <div class="color-bars">
+      <div class="bar" style="background: #c0c0c0;"></div>
+      <div class="bar" style="background: #c0c000;"></div>
+      <div class="bar" style="background: #00c0c0;"></div>
+      <div class="bar" style="background: #00c000;"></div>
+      <div class="bar" style="background: #c000c0;"></div>
+      <div class="bar" style="background: #c00000;"></div>
+      <div class="bar" style="background: #0000c0;"></div>
+    </div>
+    <div class="no-signal-text">
+      <div class="signal-message">NO SIGNAL</div>
+      <div class="signal-message">PLEASE STAND BY</div>
+      <div class="signal-message">信号異常　馬上回来</div>
+    </div>
+  </div>
+
   <div class="app">
     <!-- 左側: コントロール -->
     <div class="card">
@@ -307,6 +470,34 @@
   <!-- 画像化用ライブラリ -->
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script>
+    // モーダル処理
+    const warningModal = document.getElementById("warningModal");
+    const noSignalScreen = document.getElementById("noSignalScreen");
+    const agreeBtn = document.getElementById("agreeBtn");
+    const disagreeBtn = document.getElementById("disagreeBtn");
+    const appElement = document.querySelector(".app");
+
+    // 初期状態：アプリは非表示
+    appElement.style.display = "none";
+
+    // 同意するボタン
+    agreeBtn.addEventListener("click", () => {
+      warningModal.style.display = "none";
+      appElement.style.display = "grid";
+      // レイアウト確定後にフォント調整を実行
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          syncPreview();
+        });
+      });
+    });
+
+    // 同意しないボタン
+    disagreeBtn.addEventListener("click", () => {
+      warningModal.style.display = "none";
+      noSignalScreen.style.display = "flex";
+    });
+
     const quoteInput  = document.getElementById("quoteInput");
     const sourceInput = document.getElementById("sourceInput");
     const dateInput   = document.getElementById("dateInput");
